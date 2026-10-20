@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 const User = mongoose.model("Users", userSchema);
-//file upload
+//file upload start here
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
@@ -60,6 +60,35 @@ app.post("/register", upload.single("image"), async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
+//file upload end here
+//another way start here
+const express = require("express");
+const multer = require("multer");
+const app = express();
+require("dotenv").config();
+const port = process.env.PORT || 8000;
+const upload = multer({ dest: "uploads/" });
+app.get("/", (req, res) => {
+  res.send(
+    `
+       <form action="/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="myfile" required />
+      <button type="submit">Upload</button>
+    </form>
+    `,
+  );
+});
+app.post("/upload", upload.single("myfile"), function (req, res) {
+  res.send("file upload sssssssssssss");
+});
+
+app.listen(port, () => {
+  console.log(`server is http://localhost:${port}`);
+});
+
+//another way end here
+
 //route error
 app.use((req, res, next) => {
   res.status(404).json({ message: "route not found" });
