@@ -88,6 +88,43 @@ app.listen(port, () => {
 });
 
 //another way end here
+//100% another way start here
+require("dotenv").config();
+const express = require("express");
+const multer = require("multer");
+const app = express();
+const port = process.env.PORT || 3000;
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// ফাইল আপলোডের জন্য multer কনফিগারেশন
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: "uploads/",
+    filename: (req, file, cb) => {
+      cb(null, file.originalname);
+    },
+  }),
+});
+// হোম পেজে আপলোড ফর্ম রেন্ডার করা
+app.get("/", (req, res) => {
+  res.send(`
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" required>
+      <button type="submit">Upload</button>
+    </form>
+  `);
+});
+
+// ফাইল আপলোড হ্যান্ডেল করা
+app.post("/upload", upload.single("file"), (req, res) => {
+  res.status(200).send("ফাইল সফলভাবে আপলোড হয়েছে!");
+});
+
+app.listen(port, () => {
+  console.log(`Server is running at: http://localhost:${port}`);
+});
+
+//100% another way end here
 
 //route error
 app.use((req, res, next) => {
